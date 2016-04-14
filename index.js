@@ -1,4 +1,4 @@
-const listeners = []
+var listeners = []
 
 module.exports = state => ({
   dispatch: function (f) {
