@@ -1,29 +1,28 @@
-var listeners = []
+module.exports = state => {
+  var listeners = []
 
-module.exports = state => ({
-  dispatch: function (f) {
-    state = f(state)
-    for (var i = 0; i < listeners.length; i++) listeners[i]()
-  },
+  return {
+    dispatch: function (f) {
+      state = f(state)
+      for (var i = 0; i < listeners.length; i++) listeners[i](state)
+    },
+    getState: function () {
+      return state
+    },
+    subscribe: function (listener) {
+      if (typeof listener !== 'function') {
+        throw new Error('Expected listener to be a function.')
+      }
 
-  getState: function () {
-    return state
-  },
+      var isSubscribed = true
 
-  subscribe: function (listener) {
-    if (typeof listener !== 'function') {
-      throw new Error('Expected listener to be a function.')
-    }
+      listeners.push(listener)
 
-    var isSubscribed = true
-
-    listeners.push(listener)
-
-
-    return function () {
-      if (!isSubscribed) return
-      isSubscribed = false
-      listeners.splice(listeners.indexOf(listener), 1)
+      return function () {
+        if (!isSubscribed) return
+        isSubscribed = false
+        listeners.splice(listeners.indexOf(listener), 1)
+      }
     }
   }
-})
+}

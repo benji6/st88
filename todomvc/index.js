@@ -4,9 +4,9 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import App from './containers/App'
 import 'todomvc-app-css/index.css'
-import st88 from './st88'
+import createStore from '../'
 
-const store = st88({
+const store = createStore({
   todos: [
     {
       text: 'Use Redux',
