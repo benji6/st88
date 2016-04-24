@@ -1,4 +1,4 @@
-module.exports = state => {
+module.exports = function (state) {
   var listeners = []
 
   return {
