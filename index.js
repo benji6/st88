@@ -1,4 +1,6 @@
-module.exports = function (state) {
+var React = require('react')
+
+module.exports.createStore = function (state) {
   var listeners = []
 
   return {
@@ -24,5 +26,27 @@ module.exports = function (state) {
         listeners.splice(listeners.indexOf(listener), 1)
       }
     }
+  }
+}
+
+module.exports.connect = function (store) {
+  return function (Child) {
+    return React.createElement(React.createClass({
+      componentDidMount: function () {
+        this.unsubscribe = store.subscribe(function (state) {
+          return this.setState(state)
+        })
+      },
+      componentWillMount: function () {
+        this.setState(store.getState())
+      },
+      componentWillUnmount: function () {
+        this.unsubscribe()
+        this.unsubscribe = null
+      },
+      render () {
+        return React.createElement(Child, this.state)
+      }
+    }))
   }
 }
