@@ -45,7 +45,7 @@ module.exports.connect = function (store) {
         this.unsubscribe()
         this.unsubscribe = null
       },
-      render () {
+      render: function () {
         return React.createElement(Child, this.state)
       }
     }))
