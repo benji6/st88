@@ -33,8 +33,9 @@ module.exports.connect = function (store) {
   return function (Child) {
     return React.createElement(React.createClass({
       componentDidMount: function () {
+        var self = this
         this.unsubscribe = store.subscribe(function (state) {
-          return this.setState(state)
+          return self.setState(state)
         })
       },
       componentWillMount: function () {
