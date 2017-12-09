@@ -29,25 +29,44 @@ module.exports.createStore = function (state) {
   }
 }
 
+function Container (props) {
+  React.Component.call(this, props);
+}
+
+Container.prototype = Object.create(React.Component.prototype, {
+  componentDidMount: {
+    value: function () {
+      var self = this
+      this.unsubscribe = this.props.store.subscribe(function (state) {
+        return self.setState(state)
+      })
+    }
+  },
+  componentWillMount: {
+    value: function () {
+      this.setState(this.props.store.getState())
+    }
+  },
+  componentWillUnmount: {
+    value: function () {
+      this.unsubscribe()
+      this.unsubscribe = null
+    }
+  },
+  render: {
+    value: function () {
+      return React.createElement(this.props.Child, this.state)
+    }
+  }
+})
+
+Container.constructor = Container
+
 module.exports.connect = function (store) {
   return function (Child) {
-    return React.createElement(React.createClass({
-      componentDidMount: function () {
-        var self = this
-        this.unsubscribe = store.subscribe(function (state) {
-          return self.setState(state)
-        })
-      },
-      componentWillMount: function () {
-        this.setState(store.getState())
-      },
-      componentWillUnmount: function () {
-        this.unsubscribe()
-        this.unsubscribe = null
-      },
-      render: function () {
-        return React.createElement(Child, this.state)
-      }
-    }))
+    return React.createElement(Container, {
+      Child: Child,
+      store: store
+    })
   }
 }
